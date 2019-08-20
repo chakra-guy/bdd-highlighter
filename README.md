@@ -19,13 +19,13 @@ VS Marketplace: https://marketplace.visualstudio.com/items?itemName=TamasSoos.bd
 Before
 ![Without Keyword Highlight][before]
 
-[before]: https://github.com/tamas-soos/bdd-highligther/raw/master/assets/before.png "Without Keyword Highlight"
+[before]: https://raw.githubusercontent.com/tamas-soos/bdd-highlighter/master/assets/before.png "Without Keyword Highlight"
 
 After
 
 ![With Keyword Highlight][after]
 
-[after]: https://github.com/tamas-soos/bdd-highligther/raw/master/assets/after.png "With Keyword Highlight"
+[after]: https://raw.githubusercontent.com/tamas-soos/bdd-highlighter/master/assets/after.png "With Keyword Highlight"
 
 ## License
 
