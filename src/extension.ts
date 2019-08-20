@@ -1,68 +1,51 @@
 import * as vscode from "vscode";
 
-// this method is called when vs code is activated
+const regEx = /Given|When|Then|And/g;
+
 export function activate(context: vscode.ExtensionContext) {
-  console.log("decorator sample is activated");
-
   let timeout: NodeJS.Timer | undefined = undefined;
-
-  // hovermessage: Given [initial context], when [event occurs], then [ensure some outcomes]
-
-  // create a decorator type that we use to decorate small numbers
-  const smallNumberDecorationType = vscode.window.createTextEditorDecorationType(
-    {
-      borderWidth: "1px",
-      borderStyle: "solid",
-      overviewRulerColor: "blue",
-      overviewRulerLane: vscode.OverviewRulerLane.Right,
-      light: {
-        // this color will be used in light color themes
-        borderColor: "darkblue"
-      },
-      dark: {
-        // this color will be used in dark color themes
-        borderColor: "lightblue"
-      }
-    }
-  );
-
-  // create a decorator type that we use to decorate large numbers
-  const largeNumberDecorationType = vscode.window.createTextEditorDecorationType(
-    {
-      cursor: "crosshair",
-      // use a themable color. See package.json for the declaration and default values.
-      backgroundColor: { id: "myextension.largeNumberBackground" }
-    }
-  );
-
   let activeEditor = vscode.window.activeTextEditor;
+  let KeywordDecorationType: vscode.TextEditorDecorationType;
+
+  function init() {
+    const config: vscode.DecorationRenderOptions = {
+      backgroundColor: "#00000000",
+      color: "#F15B20",
+      borderRadius: "0px"
+    };
+
+    const customConfig: vscode.DecorationRenderOptions =
+      vscode.workspace.getConfiguration().get("BDDHighlighter") || {};
+
+    KeywordDecorationType = vscode.window.createTextEditorDecorationType({
+      ...config,
+      ...customConfig
+    });
+  }
 
   function updateDecorations() {
-    if (!activeEditor) {
-      return;
-    }
-    const regEx = /\d+/g;
-    const text = activeEditor.document.getText();
-    const smallNumbers: vscode.DecorationOptions[] = [];
-    const largeNumbers: vscode.DecorationOptions[] = [];
+    if (!activeEditor) return;
+
     let match;
+    const text = activeEditor.document.getText();
+    const keywords: vscode.DecorationOptions[] = [];
+
     while ((match = regEx.exec(text))) {
       const startPos = activeEditor.document.positionAt(match.index);
       const endPos = activeEditor.document.positionAt(
         match.index + match[0].length
       );
+
       const decoration = {
         range: new vscode.Range(startPos, endPos),
-        hoverMessage: "Number **" + match[0] + "**"
+        hoverMessage:
+          "Given [initial context], When [event occurs], Then [ensure some outcomes]"
       };
-      if (match[0].length < 3) {
-        smallNumbers.push(decoration);
-      } else {
-        largeNumbers.push(decoration);
-      }
+
+      keywords.push(decoration);
     }
-    activeEditor.setDecorations(smallNumberDecorationType, smallNumbers);
-    activeEditor.setDecorations(largeNumberDecorationType, largeNumbers);
+
+    activeEditor.setDecorations(KeywordDecorationType, keywords);
   }
 
   function triggerUpdateDecorations() {
@@ -70,132 +53,28 @@ export function activate(context: vscode.ExtensionContext) {
       clearTimeout(timeout);
       timeout = undefined;
     }
-    timeout = setTimeout(updateDecorations, 500);
+    timeout = setTimeout(updateDecorations, 250);
   }
 
-  if (activeEditor) {
-    triggerUpdateDecorations();
-  }
+  init();
 
-  vscode.window.onDidChangeActiveTextEditor(
-    editor => {
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(() => {
+      init();
+      updateDecorations();
+    }),
+
+    vscode.window.onDidChangeActiveTextEditor(editor => {
       activeEditor = editor;
-      if (editor) {
-        triggerUpdateDecorations();
-      }
-    },
-    null,
-    context.subscriptions
-  );
+      updateDecorations();
+    }),
 
-  vscode.workspace.onDidChangeTextDocument(
-    event => {
+    vscode.workspace.onDidChangeTextDocument(event => {
       if (activeEditor && event.document === activeEditor.document) {
         triggerUpdateDecorations();
       }
-    },
-    null,
-    context.subscriptions
+    })
   );
+
+  updateDecorations();
 }
-
-// import * as vscode from "vscode";
-
-// // this method is called when vs code is activated
-// export function activate(context: vscode.ExtensionContext) {
-//   console.log("decorator sample is activated");
-
-//   let timeout: NodeJS.Timer | undefined = undefined;
-
-//   const KeywordDecorationType = vscode.window.createTextEditorDecorationType({
-//     backgroundColor: { id: "myextension.keywordBackground" }
-//   });
-
-//   let activeEditor = vscode.window.activeTextEditor;
-
-//   function updateDecorations() {
-//     if (!activeEditor) return;
-
-//     let match;
-//     const regEx = /Given|When|Then|And/g;
-//     const text = activeEditor.document.getText();
-//     const keywords: vscode.DecorationOptions[] = [];
-
-//     while ((match = regEx.exec(text))) {
-//       const startPos = activeEditor.document.positionAt(match.index);
-//       const endPos = activeEditor.document.positionAt(
-//         match.index + match[0].length
-//       );
-
-//       const decoration = {
-//         range: new vscode.Range(startPos, endPos)
-//         // hoverMessage: 'Helo'
-//       };
-
-//       keywords.push(decoration);
-//     }
-
-//     activeEditor.setDecorations(KeywordDecorationType, keywords);
-//   }
-
-//   function triggerUpdateDecorations() {
-//     if (timeout) {
-//       clearTimeout(timeout);
-//       timeout = undefined;
-//     }
-//     timeout = setTimeout(updateDecorations, 500);
-//   }
-
-//   if (activeEditor) {
-//     triggerUpdateDecorations();
-//   }
-
-//   vscode.window.onDidChangeActiveTextEditor(
-//     editor => {
-//       activeEditor = editor;
-//       if (editor) {
-//         triggerUpdateDecorations();
-//       }
-//     },
-//     null,
-//     context.subscriptions
-//   );
-
-//   vscode.workspace.onDidChangeTextDocument(
-//     event => {
-//       if (activeEditor && event.document === activeEditor.document) {
-//         triggerUpdateDecorations();
-//       }
-//     },
-//     null,
-//     context.subscriptions
-//   );
-// }
-
-// // The module 'vscode' contains the VS Code extensibility API
-// // Import the module and reference it with the alias vscode in your code below
-// import * as vscode from 'vscode';
-
-// // this method is called when your extension is activated
-// // your extension is activated the very first time the command is executed
-// export function activate(context: vscode.ExtensionContext) {
-
-// 	// Use the console to output diagnostic information (console.log) and errors (console.error)
-// 	// This line of code will only be executed once when your extension is activated
-// 	console.log('Congratulations, your extension "bdd-highlighter" is now active!');
-
-// 	// The command has been defined in the package.json file
-// 	// Now provide the implementation of the command with registerCommand
-// 	// The commandId parameter must match the command field in package.json
-// 	let disposable = vscode.commands.registerCommand('extension.helloWorld', () => {
-// 		// The code you place here will be executed every time your command is executed
-
-// 		// Display a message box to the user
-// 		vscode.window.showInformationMessage('Hello World!');
-// 	});
-
-// 	context.subscriptions.push(disposable);
-// }
-
-// // this method is called when your extension is deactivated
-// export function deactivate() {}
