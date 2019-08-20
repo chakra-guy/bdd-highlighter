@@ -2,6 +2,8 @@
 
 Text highlighter for `Given`, `When`, `Then` and `And` keywords in VS Code.
 
+VS Marketplace: https://marketplace.visualstudio.com/items?itemName=TamasSoos.bdd-highlighter
+
 ## Settings
 
 ```js
