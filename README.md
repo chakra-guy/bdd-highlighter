@@ -16,9 +16,16 @@ VS Marketplace: https://marketplace.visualstudio.com/items?itemName=TamasSoos.bd
 
 ## Demo
 
-// TODO Before
+Before
+![Without Keyword Highlight][before]
 
-// TODO After
+[before]: https://github.com/tamas-soos/bdd-highligther/raw/master/assets/before.png "Without Keyword Highlight"
+
+After
+
+![With Keyword Highlight][after]
+
+[after]: https://github.com/tamas-soos/bdd-highligther/raw/master/assets/after.png "With Keyword Highlight"
 
 ## License
 
