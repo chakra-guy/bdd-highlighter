@@ -1,5 +1,3 @@
-# BDD Hightlighter
-
 Text highlighter for `Given`, `When`, `Then` and `And` keywords in VS Code.
 
 VS Marketplace: https://marketplace.visualstudio.com/items?itemName=TamasSoos.bdd-highlighter
@@ -17,6 +15,7 @@ VS Marketplace: https://marketplace.visualstudio.com/items?itemName=TamasSoos.bd
 ## Demo
 
 Before
+
 ![Without Keyword Highlight][before]
 
 [before]: https://raw.githubusercontent.com/tamas-soos/bdd-highlighter/master/assets/before.png "Without Keyword Highlight"
