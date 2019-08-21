@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-const regEx = /Given|When|Then|And/g;
+const regEx = /Given |When |Then |And /g;
 
 export function activate(context: vscode.ExtensionContext) {
   let timeout: NodeJS.Timer | undefined = undefined;
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
     while ((match = regEx.exec(text))) {
       const startPos = activeEditor.document.positionAt(match.index);
       const endPos = activeEditor.document.positionAt(
-        match.index + match[0].length
+        match.index + match[0].length - 1
       );
 
       const decoration = {
