@@ -12,6 +12,14 @@ VS Marketplace: https://marketplace.visualstudio.com/items?itemName=TamasSoos.bd
 },
 ```
 
+You can also limit the feature to specific files. If you leave the `includeFiles` empty it will operate on _all files_.
+
+```js
+"BDDHighlighter": {
+  "includeFiles": [ ".test.js", ".spec.js" ],
+},
+```
+
 ## Demo
 
 Before

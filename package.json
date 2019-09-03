@@ -1,8 +1,8 @@
 {
   "name": "bdd-highlighter",
   "displayName": "BDD Highlighter",
-  "description": "Highlightes \"Given, When, Then, And\" keywords from BDD",
-  "version": "0.0.3",
+  "description": "💅 Highlights \"Given, When, Then, And\" keywords from BDD",
+  "version": "0.0.4",
   "publisher": "TamasSoos",
   "engines": {
     "vscode": "^1.37.0"
@@ -35,5 +35,8 @@
     "typescript": "^3.3.1",
     "tslint": "^5.12.1",
     "vscode-test": "^1.0.2"
+  },
+  "dependencies": {
+    "path": "^0.12.7"
   }
 }

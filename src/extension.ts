@@ -1,36 +1,48 @@
 import * as vscode from "vscode";
+import * as path from "path";
 
-const regEx = /Given |When |Then |And /g;
+type FileExtensions = Array<string>;
+
+const bdd_regex = /Given |When |Then |And /g;
+
+const defaultDecoration: vscode.DecorationRenderOptions = {
+  backgroundColor: "#00000000",
+  color: "#F15B20",
+  borderRadius: "0px"
+};
 
 export function activate(context: vscode.ExtensionContext) {
   let timeout: NodeJS.Timer | undefined = undefined;
   let activeEditor = vscode.window.activeTextEditor;
-  let KeywordDecorationType: vscode.TextEditorDecorationType;
+  let keywordDecorationType: vscode.TextEditorDecorationType;
+  let includeFiles: FileExtensions;
 
   function init() {
-    const config: vscode.DecorationRenderOptions = {
-      backgroundColor: "#00000000",
-      color: "#F15B20",
-      borderRadius: "0px"
-    };
+    const config:
+      | vscode.WorkspaceConfiguration
+      | undefined = vscode.workspace.getConfiguration().get("BDDHighlighter");
 
-    const customConfig: vscode.DecorationRenderOptions =
-      vscode.workspace.getConfiguration().get("BDDHighlighter") || {};
+    if (config) {
+      const { backgroundColor, color, borderRadius } = defaultDecoration;
 
-    KeywordDecorationType = vscode.window.createTextEditorDecorationType({
-      ...config,
-      ...customConfig
-    });
+      keywordDecorationType = vscode.window.createTextEditorDecorationType({
+        backgroundColor: config.backgroundColor || backgroundColor,
+        color: config.color || color,
+        borderRadius: config.borderRadius || borderRadius
+      });
+
+      includeFiles = config.includeFiles || [];
+    }
   }
 
   function updateDecorations() {
-    if (!activeEditor) return;
+    if (!activeEditor || !includesFile()) return;
 
     let match;
     const text = activeEditor.document.getText();
     const keywords: vscode.DecorationOptions[] = [];
 
-    while ((match = regEx.exec(text))) {
+    while ((match = bdd_regex.exec(text))) {
       const startPos = activeEditor.document.positionAt(match.index);
       const endPos = activeEditor.document.positionAt(
         match.index + match[0].length - 1
@@ -45,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
       keywords.push(decoration);
     }
 
-    activeEditor.setDecorations(KeywordDecorationType, keywords);
+    activeEditor.setDecorations(keywordDecorationType, keywords);
   }
 
   function triggerUpdateDecorations() {
@@ -54,6 +66,17 @@ export function activate(context: vscode.ExtensionContext) {
       timeout = undefined;
     }
     timeout = setTimeout(updateDecorations, 250);
+  }
+
+  function includesFile() {
+    if (!activeEditor) return false;
+    if (includeFiles.length === 0) return true;
+
+    const fileName = path.parse(activeEditor.document.fileName).base;
+    const [, ...rest] = fileName.split(".");
+    const extension = `.${rest.join(".")}`;
+
+    return includeFiles.some(includeFile => includeFile === extension);
   }
 
   init();
