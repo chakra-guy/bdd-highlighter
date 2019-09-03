@@ -2,7 +2,7 @@
   "name": "bdd-highlighter",
   "displayName": "BDD Highlighter",
   "description": "💅 Highlights \"Given, When, Then, And\" keywords from BDD",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "TamasSoos",
   "engines": {
     "vscode": "^1.37.0"

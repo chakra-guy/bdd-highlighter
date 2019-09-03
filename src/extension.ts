@@ -15,24 +15,21 @@ export function activate(context: vscode.ExtensionContext) {
   let timeout: NodeJS.Timer | undefined = undefined;
   let activeEditor = vscode.window.activeTextEditor;
   let keywordDecorationType: vscode.TextEditorDecorationType;
-  let includeFiles: FileExtensions;
+  let acceptedFiles: FileExtensions;
 
   function init() {
     const config:
       | vscode.WorkspaceConfiguration
       | undefined = vscode.workspace.getConfiguration().get("BDDHighlighter");
 
-    if (config) {
-      const { backgroundColor, color, borderRadius } = defaultDecoration;
+    const { includeFiles = [], ...decoration } = config || {};
 
-      keywordDecorationType = vscode.window.createTextEditorDecorationType({
-        backgroundColor: config.backgroundColor || backgroundColor,
-        color: config.color || color,
-        borderRadius: config.borderRadius || borderRadius
-      });
+    acceptedFiles = includeFiles;
 
-      includeFiles = config.includeFiles || [];
-    }
+    keywordDecorationType = vscode.window.createTextEditorDecorationType({
+      ...defaultDecoration,
+      ...decoration
+    });
   }
 
   function updateDecorations() {
@@ -70,13 +67,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   function includesFile() {
     if (!activeEditor) return false;
-    if (includeFiles.length === 0) return true;
+    if (acceptedFiles.length === 0) return true;
 
     const fileName = path.parse(activeEditor.document.fileName).base;
     const [, ...rest] = fileName.split(".");
     const extension = `.${rest.join(".")}`;
 
-    return includeFiles.some(includeFile => includeFile === extension);
+    return acceptedFiles.some(acceptedFile => acceptedFile === extension);
   }
 
   init();
